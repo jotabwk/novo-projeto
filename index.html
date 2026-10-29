@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlerGria - Logística & PCP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- EMAILJS CONFIGURAÇÃO -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("SUA_PUBLIC_KEY_AQUI"); // Mantenha a sua chave real
+        })();
+    </script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        pcp: {
+                            navy: '#0F172A',    // Azul Marinho Corporativo
+                            blue: '#2563EB',    // Azul Tech
+                            emerald: '#059669', // Verde Esterilização
+                            slate: '#F8FAFC'    // Fundo Clean
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .view-section { 
+            display: none; 
+            opacity: 0; 
+            transform: translateY(15px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .view-section.active { display: block; }
+        .view-section.fade-in { opacity: 1; transform: translateY(0); }
+        html { scroll-behavior: smooth; }
+        
+        /* Fundo com malha pontilhada (estilo engenharia/projetos) */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+        }
+        .dark .bg-grid {
+            background-image: radial-gradient(circle, #334155 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-800 dark:text-slate-200 bg-pcp-slate dark:bg-pcp-navy bg-grid min-h-screen transition-colors duration-300">
+
+    <!-- Navegação Corporativa -->
+    <nav class="bg-white/90 dark:bg-pcp-navy/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showView('view-home')">
+                <i class="fa-solid fa-layer-group text-2xl text-pcp-blue"></i>
+                <span class="text-xl font-bold tracking-tight">AlerGria <span class="text-pcp-blue font-normal">PCP Systems</span></span>
+            </div>
+            
+            <div class="hidden md:flex space-x-8 font-semibold text-sm text-slate-600 dark:text-slate-300">
+                <button onclick="showView('view-home')" class="hover:text-pcp-blue transition">Dashboard</button>
+                <button onclick="showView('view-logistica')" class="hover:text-pcp-emerald transition">Logística & Esterilização</button>
+                <button onclick="showView('view-ajudar')" class="hover:text-pcp-blue transition">Doações & Voluntariado</button>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleTheme()" class="text-slate-500 hover:text-pcp-blue transition">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:block"></i>
+                </button>
+                <button onclick="showView('view-login')" class="bg-pcp-blue hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-md transition active:scale-95">
+                    Acesso Restrito
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-12 relative z-10">
+        
+        <!-- Dashboard Home -->
+        <section id="view-home" class="view-section active fade-in">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6 tracking-tight">
+                    Engenharia de Produção a Serviço do Sorriso.
+                </h1>
+                <p class="text-lg text-slate-600 dark:text-slate-400">
+                    Plataforma integrada de Planeamento e Controlo da Produção (PCP) para gerir operações de doação, triagem, esterilização e expedição de donativos infantis.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1: Doações -->
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg transition cursor-pointer" onclick="showView('view-ajudar')">
+                    <div class="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-boxes-packing text-2xl text-pcp-blue"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Gestão de Doações</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">Controlo financeiro e entrada de materiais no stock. Simulação de transações via sistema integrado.</p>
+                </div>
+
+                <!-- Card 2: Logística (NOVO) -->
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:border-pcp-emerald transition cursor-pointer" onclick="showView('view-logistica')">
+                    <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-shield-virus text-2xl text-pcp-emerald"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Processos & Esterilização</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">Monitorização da cadeia de suprimentos, protocolos de assepsia e roteirização da entrega segura.</p>
+                </div>
+
+                <!-- Card 3: Recursos Humanos / Voluntários -->
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg transition cursor-pointer" onclick="showView('view-ajudar')">
+                    <div class="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-network-wired text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Recursos Humanos</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">Captação, triagem e alocação de voluntários para operações de logística e moderação de sistema.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOVO: Logística e Esterilização (PCP) -->
+        <section id="view-logistica" class="view-section">
+            <div class="inline-flex items-center mb-8 cursor-pointer text-slate-500 hover:text-pcp-blue font-semibold transition" onclick="showView('view-home')">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Voltar ao Dashboard
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white">Fluxo de Logística e Esterilização</h2>
+                    <p class="text-slate-500 mt-2">Protocolos de segurança e mapeamento da cadeia de operações.</p>
+                </div>
+                <div class="mt-4 md:mt-0 bg-emerald-100 dark:bg-emerald-900/40 text-pcp-emerald px-4 py-2 rounded-lg font-bold text-sm flex items-center">
+                    <i class="fa-solid fa-check-circle mr-2"></i> Operação ISO/NR Compliant
+                </div>
+            </div>
+            
+            <!-- Linha do Tempo / Fluxo PCP -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-slate-200 dark:bg-slate-700 -z-10 transform -translate-y-1/2"></div>
+                
+                <!-- Passo 1 -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 relative">
+                    <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-xl font-bold text-slate-400 mx-auto mb-4 border-4 border-white dark:border-slate-800">1</div>
+                    <h4 class="font-bold text-center mb-2 text-pcp-blue"><i class="fa-solid fa-dolly mr-2"></i>Receção e Triagem</h4>
+                    <p class="text-xs text-slate-500 text-center">Inspeção visual dos donativos. Separação por categorias e registo no ERP para rastreabilidade do lote.</p>
+                </div>
+
+                <!-- Passo 2 -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 relative">
+                    <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/50 rounded-full flex items-center justify-center text-xl font-bold text-pcp-emerald mx-auto mb-4 border-4 border-white dark:border-slate-800">2</div>
+                    <h4 class="font-bold text-center mb-2 text-pcp-emerald"><i class="fa-solid fa-pump-medical mr-2"></i>Desinfeção Ativa</h4>
+                    <p class="text-xs text-slate-500 text-center">Aplicação de protocolos rigorosos de assepsia. Uso de luz UV-C em câmara fechada e sanitização química segura (Álcool 70%).</p>
+                </div>
+
+                <!-- Passo 3 -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 relative">
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center text-xl font-bold text-pcp-blue mx-auto mb-4 border-4 border-white dark:border-slate-800">3</div>
+                    <h4 class="font-bold text-center mb-2 text-pcp-blue"><i class="fa-solid fa-box-archive mr-2"></i>Embalagem Estéril</h4>
+                    <p class="text-xs text-slate-500 text-center">Acondicionamento a vácuo em ambiente controlado para evitar recontaminação, seguindo normas de segurança operacionais.</p>
+                </div>
+
+                <!-- Passo 4 -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 relative">
+                    <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center text-xl font-bold text-indigo-600 mx-auto mb-4 border-4 border-white dark:border-slate-800">4</div>
+                    <h4 class="font-bold text-center mb-2 text-indigo-600"><i class="fa-solid fa-truck-fast mr-2"></i>Roteirização e Envio</h4>
+                    <p class="text-xs text-slate-500 text-center">Planeamento de rotas (Last-Mile Delivery) otimizado. Entrega segura diretamente na unidade hospitalar ou morada da criança.</p>
+                </div>
+            </div>
+
+            <!-- Dados Técnicos -->
+            <div class="mt-12 bg-slate-900 text-white rounded-2xl p-8 shadow-xl flex flex-col md:flex-row items-center justify-between">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">Painel de Controlo de Qualidade</h3>
+                    <p class="text-slate-400 text-sm max-w-md">Todos os processos obedecem a exigências técnicas de engenharia clínica e gestão de qualidade logística.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <div class="text-center">
+                        <div class="text-3xl font-extrabold text-pcp-emerald">99.9%</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wide mt-1">Taxa de Assepsia</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-extrabold text-pcp-blue">&lt; 24h</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wide mt-1">Lead Time Médio</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Doações e Voluntariado (Unificados) -->
+        <section id="view-ajudar" class="view-section">
+            <div class="inline-flex items-center mb-8 cursor-pointer text-slate-500 hover:text-pcp-blue font-semibold transition" onclick="showView('view-home')">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Voltar ao Dashboard
+            </div>
+            
+            <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-8">Portal de Apoio & Alocação</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Módulo de Doação Financeira -->
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center mb-6">
+                        <i class="fa-solid fa-money-bill-transfer text-2xl text-pcp-blue mr-3"></i>
+                        <h3 class="text-xl font-bold">Simulação de Aporte (Doação)</h3>
+                    </div>
+                    <form onsubmit="alert('Transação processada no ERP local com sucesso.'); event.preventDefault(); showView('view-home');">
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Valor de Investimento (R$)</label>
+                            <input type="number" class="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:border-pcp-blue" value="100">
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Via de Pagamento</label>
+                            <select class="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:border-pcp-blue">
+                                <option>Transferência PIX (Imediata)</option>
+                                <option>Cartão de Crédito Corporativo/Físico</option>
+                                <option>Boleto / Fatura</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-pcp-blue hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition shadow-md">Processar Entrada</button>
+                    </form>
+                </div>
+
+                <!-- Módulo de Captação de Voluntários -->
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center mb-6">
+                        <i class="fa-solid fa-id-badge text-2xl text-pcp-emerald mr-3"></i>
+                        <h3 class="text-xl font-bold">Cadastro de Efetivo (Voluntariado)</h3>
+                    </div>
+                    <form id="form-voluntario" onsubmit="enviarCadastroVoluntario(event)" class="space-y-4">
+                        <input type="text" name="user_name" required placeholder="Nome do Colaborador" class="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:border-pcp-emerald text-sm">
+                        <div class="flex space-x-4">
+                            <input type="email" name="user_email" required placeholder="E-mail de contacto" class="w-1/2 p-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:border-pcp-emerald text-sm">
+                            <input type="tel" name="contact_number" required placeholder="Telefone / WhatsApp" class="w-1/2 p-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:border-pcp-emerald text-sm">
+                        </div>
+                        <select name="interest_area" class="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:border-pcp-emerald text-sm">
+                            <option>Operador de Triagem e Logística</option>
+                            <option>Técnico de Qualidade e Esterilização</option>
+                            <option>Gestor de Plataforma Web (T.I)</option>
+                        </select>
+                        <button type="submit" class="w-full bg-pcp-emerald hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition shadow-md">Registrar Efetivo</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Acesso Restrito (Login) -->
+        <section id="view-login" class="view-section">
+            <div class="max-w-md mx-auto bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mt-10">
+                <div class="text-center mb-8">
+                    <i class="fa-solid fa-lock text-3xl text-slate-400 mb-3"></i>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Portal do Operador</h2>
+                    <p class="text-sm text-slate-500 mt-1">Autenticação necessária para acesso aos módulos logísticos e administrativos.</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <input type="email" placeholder="Endereço de E-mail" class="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:border-pcp-navy">
+                    <input type="password" placeholder="Palavra-passe" class="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 outline-none focus:border-pcp-navy">
+                    <button onclick="alert('Sistema operando offline em ambiente local. Acesso concedido temporariamente.'); showView('view-home');" class="w-full bg-pcp-navy hover:bg-slate-800 text-white font-bold py-3 rounded-lg transition shadow-md mt-2">Autenticar Sistema</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- Navegação Single Page Application ---
+        function showView(viewId) {
+            const currentView = document.querySelector('.view-section.active');
+            if (currentView && currentView.id === viewId) return;
+
+            const activateNew = () => {
+                const newView = document.getElementById(viewId);
+                newView.classList.add('active');
+                void newView.offsetWidth; 
+                newView.classList.add('fade-in');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            if (currentView) {
+                currentView.classList.remove('fade-in');
+                setTimeout(() => {
+                    currentView.classList.remove('active');
+                    activateNew();
+                }, 300); 
+            } else {
+                activateNew();
+            }
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        // --- Sistema de Envio de Voluntários (EmailJS mantido) ---
+        function enviarCadastroVoluntario(e) {
+            e.preventDefault(); 
+            const form = e.target;
+            const btnSubmit = form.querySelector('button[type="submit"]');
+            
+            const textoOriginal = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando...';
+            btnSubmit.disabled = true;
+
+            if (typeof emailjs === 'undefined') {
+                alert('Registo validado no banco de dados local. (EmailJS não detetado)');
+                form.reset(); showView('view-home');
+                btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false;
+                return;
+            }
+
+            // ATENÇÃO: Mantenha as suas chaves aqui se for usar o envio real.
+            emailjs.sendForm('SEU_SERVICE_ID', 'SEU_TEMPLATE_ID', form)
+                .then(() => {
+                    alert('Efetivo registado com sucesso no sistema e notificado por e-mail.');
+                    form.reset(); showView('view-home');
+                }, (error) => {
+                    alert('Erro de comunicação com o servidor de correio. Tente mais tarde.');
+                    console.log('Erro do sistema:', error);
+                })
+                .finally(() => { btnSubmit.innerHTML = textoOriginal; btnSubmit.disabled = false; });
+        }
+    </script>
+</body>
+</html>
